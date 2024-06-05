@@ -1,10 +1,9 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
-
 import '../model/todo.dart';
 import '../constant/color.dart';
 import '../widget/todo_item.dart';
+import '../screens/profile.dart';
+
 
 class Home extends StatefulWidget {
   Home({Key? key}) : super(key: key);
@@ -13,13 +12,13 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
-  class _HomeState extends State<Home> {
-    final todosList = ToDo.todoList();
-    List<ToDo> _foundToDo = [];
-    final _todocontroller = TextEditingController();
-  
+class _HomeState extends State<Home> {
+  final todosList = ToDo.todoList();
+  List<ToDo> _foundToDo = [];
+  final TextEditingController _todocontroller = TextEditingController();
+
   @override
-  void initState(){
+  void initState() {
     _foundToDo = todosList;
     super.initState();
   }
@@ -27,15 +26,15 @@ class Home extends StatefulWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: white,
+      backgroundColor: kWhiteColor,
       appBar: _buildAppBar(),
       body: Stack(
         children: [
           Container(
-            padding: EdgeInsets.symmetric(
+            padding: const EdgeInsets.symmetric(
               horizontal: 20,
               vertical: 15,
-              ),
+            ),
             child: Column(
               children: [
                 searchBox(),
@@ -43,11 +42,11 @@ class Home extends StatefulWidget {
                   child: ListView(
                     children: [
                       Container(
-                        margin: EdgeInsets.only(
+                        margin: const EdgeInsets.only(
                           top: 50,
                           bottom: 20,
                         ),
-                        child: Text(
+                        child: const Text(
                           'All ToDos',
                           style: TextStyle(
                             fontSize: 30,
@@ -55,11 +54,11 @@ class Home extends StatefulWidget {
                           ),
                         ),
                       ),
-                      for ( ToDo todoo in _foundToDo.reversed )
-                      ToDoItem(
-                        todo: todoo,
-                        onToDoChanged: _handleToDoChange,
-                        onDeleteItem: _deleteToDoItem,
+                      for (ToDo todoo in _foundToDo.reversed)
+                        ToDoItem(
+                          todo: todoo,
+                          onToDoChanged: _handleToDoChange,
+                          onDeleteItem: _deleteToDoItem,
                         ),
                     ],
                   ),
@@ -69,96 +68,105 @@ class Home extends StatefulWidget {
           ),
           Align(
             alignment: Alignment.bottomCenter,
-            child: Row(children: [
-              Expanded(
-                child: Container(
-                  margin: EdgeInsets.only(
-                    bottom: 20,
-                    right: 20,
-                    left: 20
+            child: Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.only(
+                      bottom: 20,
+                      right: 20,
+                      left: 20,
                     ),
-                    padding: EdgeInsets.symmetric(
+                    padding: const EdgeInsets.symmetric(
                       horizontal: 20,
                       vertical: 5,
-                      ),
+                    ),
                     decoration: BoxDecoration(
-                      color: white,
+                      color: kWhiteColor,
                       boxShadow: const [
                         BoxShadow(
-                        color: grey, 
-                        offset: Offset(0.0, 0.0),
-                        blurRadius: 10.0,
-                        spreadRadius: 0.0,
-                      ),],
+                          color: kGreyColor,
+                          offset: Offset(0.0, 0.0),
+                          blurRadius: 10.0,
+                          spreadRadius: 0.0,
+                        ),
+                      ],
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: TextField(
                       controller: _todocontroller,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         hintText: 'Tambahkan Tugas Baru',
-                        border: InputBorder.none
+                        border: InputBorder.none,
                       ),
                     ),
-                    )
-                    )
-                    Container(
-                      margin: EdgeInsets.only(
-                        bottom: 20,
-                        right: 20,
-                        ),
-                        child: ElevatedButton(
-                          child: Text('+', style: TextStyle(fontSize: 40,),),
-                          onPressed: () {
-                            _addToDoItem(_todocontroller.text);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            primary: blue,
-                            minimumSize: Size(60, 60),
-                            elevation: 10,
-                          ),
-                        ),
-                    )
-            ],),
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(
+                    bottom: 20,
+                    right: 20,
+                  ),
+                  child: ElevatedButton(
+                    child: const Text(
+                      '+',
+                      style: TextStyle(
+                        fontSize: 40,
+                      ),
+                    ),
+                    onPressed: () {
+                      _addToDoItem(_todocontroller.text);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: kBlueColor,
+                      minimumSize: const Size(60, 60),
+                      elevation: 10,
+                    ),
+                  ),
+                )
+              ],
+            ),
           )
         ],
       ),
     );
   }
 
-  Void _handleToDoChange(ToDo todo) {
+  void _handleToDoChange(ToDo todo) {
     setState(() {
       todo.isDone = !todo.isDone;
-      });
+    });
   }
 
   void _deleteToDoItem(String id) {
     setState(() {
-      todoList.removeWhere((item) => item.id == id);
-      });
+      todosList.removeWhere((item) => item.id == id);
+    });
   }
 
-  void _addToDoItem(String toDO){
+  void _addToDoItem(String toDo) {
     setState(() {
-    todoList.add (ToDo(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      todoText: toDo,
-    ));
+      todosList.add(
+        ToDo(
+          id: DateTime.now().millisecondsSinceEpoch.toString(),
+          todoText: toDo,
+        ),
+      );
     });
     _todocontroller.clear();
   }
 
   void _runFilter(String enteredKeyword) {
     List<ToDo> results = [];
-    if(enteredKeyword.isEmpty) {
+    if (enteredKeyword.isEmpty) {
       results = todosList;
-    } else{
+    } else {
       results = todosList
-      .where((item) => item.todoText!
-      .toLowerCase()
-      .contains(enteredKeyword.toLowerCase()))
-      .toList();
+          .where((item) => item.todoText!
+              .toLowerCase()
+              .contains(enteredKeyword.toLowerCase()))
+          .toList();
     }
-
     setState(() {
       _foundToDo = results;
     });
@@ -166,51 +174,57 @@ class Home extends StatefulWidget {
 
   Widget searchBox() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 15),
-      decoration:BoxDecoration(
-      color: white,
-      borderRadius: BorderRadius.circular(20)
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      decoration: BoxDecoration(
+        color: kWhiteColor,
+        borderRadius: BorderRadius.circular(20),
       ),
       child: TextField(
         onChanged: (value) => _runFilter(value),
         decoration: InputDecoration(
-            contentPadding: EdgeInsets.all(0),
-            prefixIcon: Icon(
-              Icon.search,
-              color: black,
-              size: 20,
-            ),
-            prefixIconConstraints: BoxConstraints(maxHeight: 20, minWidth: 25),
-            border: InputBorder.none,
-            hintText: 'seacrh',
-            hintStyle: TextStyle(
-              color: grey,
-            )),
+          contentPadding: const EdgeInsets.all(0),
+          prefixIcon: Icon(
+            Icons.search,
+            color: kBlackColor,
+            size: 20,
+          ),
+          prefixIconConstraints: const BoxConstraints(maxHeight: 20, minWidth: 25),
+          border: InputBorder.none,
+          hintText: 'Search',
+          hintStyle: TextStyle(
+            color: kGreyColor,
+          ),
+        ),
       ),
     );
   }
 
   AppBar _buildAppBar() {
     return AppBar(
-        backgroundColor: white,
-        elevation: 0,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Icon(
-              Icons.menu,
-              color: black,
-              size: 30,
-            ),
-            Container(
+      backgroundColor: kWhiteColor,
+      elevation: 0,
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text('To-Do List', style: TextStyle(color: kBlackColor, fontSize: 20, fontWeight: FontWeight.bold)),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ProfilePage()), // Ganti dengan halaman profil Anda
+              );
+            },
+            child: Container(
               height: 40,
               width: 40,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
-                child: Image.asset('asset/OIG1.jpg'),
+                child: Image.asset('assets/OIG1.jpg'), // Ganti dengan path gambar profil Anda
               ),
-            )
-          ],
-        ));
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

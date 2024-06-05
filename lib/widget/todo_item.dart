@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import '../constant/color.dart';
 import '../model/todo.dart';
 
-class ToDoItem extends statelessWidget {
+class ToDoItem extends StatelessWidget {
   final ToDo todo;
-  final onToDoChanged;
-  final onDeleteItem;
+  final Function(ToDo) onToDoChanged;
+  final Function(String) onDeleteItem;
 
   const ToDoItem({
     Key? key,
@@ -17,7 +17,7 @@ class ToDoItem extends statelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: 20),
+      margin: const EdgeInsets.only(bottom: 20),
       child: ListTile(
         onTap: () {
           // print('klik pada ToDo Item.');
@@ -26,33 +26,33 @@ class ToDoItem extends statelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
-        contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-        tileColor: white,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+        tileColor: kWhiteColor,
         leading: Icon(
           todo.isDone ? Icons.check_box : Icons.check_box_outline_blank,
-          color: blue,
+          color: kBlueColor,
         ),
         title: Text(
-          todo.todoText!,
+          todo.todoText,
           style: TextStyle(
             fontSize: 16,
-            color: black,
+            color: kBlackColor,
             decoration: todo.isDone ? TextDecoration.lineThrough : null,
           ),
         ),
         trailing: Container(
-          padding: EdgeInsets.all(0),
-          margin: EdgeInsets.symmetric(vertical: 12),
+          padding: EdgeInsets.zero,
+          margin: const EdgeInsets.symmetric(vertical: 12),
           height: 35,
           width: 35,
           decoration: BoxDecoration(
-            color: red,
+            color: kRedColor,
             borderRadius: BorderRadius.circular(5),
           ),
           child: IconButton(
-            color: white,
+            color: kWhiteColor,
             iconSize: 18,
-            icon: Icon(Icons.delete),
+            icon: const Icon(Icons.delete),
             onPressed: () {
               // print('Klik pada ikon hapus');
               onDeleteItem(todo.id);
